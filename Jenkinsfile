@@ -71,7 +71,7 @@ pipeline {
                     steps {
                         echo 'Push latest para AWS ECR'
                         script {
-                            docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:ubuntu') {
+                            docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-ecr-access') {
                                 docker.image('digitalhouse-devops-app').push()
                             }
                         }
@@ -91,7 +91,7 @@ pipeline {
                 script {
                     if(env.GIT_BRANCH=='origin/master'){
  
-                        docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:ubuntu') {
+                        docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-ecr-access') {
                             docker.image('digitalhouse-devops-app').pull()
                         }
 
@@ -134,7 +134,7 @@ pipeline {
                         }
 
 
-                        docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:ubuntu') {
+                        docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-ecr-access') {
                             docker.image('digitalhouse-devops-app').pull()
                         }
 
