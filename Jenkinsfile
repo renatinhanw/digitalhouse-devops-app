@@ -4,11 +4,11 @@ pipeline {
 
     environment {
 
-        NODE_ENV="development"
+        NODE_ENV="homolog"
         AWS_ACCESS_KEY=""
         AWS_SECRET_ACCESS_KEY=""
         AWS_SDK_LOAD_CONFIG="0"
-        BUCKET_NAME="app-digital"
+        BUCKET_NAME="digitalhouse-devopers-homolog"
         REGION="us-east-1" 
         PERMISSION=""
         ACCEPTED_FILE_FORMATS_ARRAY=""
@@ -35,7 +35,7 @@ pipeline {
                 stage('Clone repository') {
                     steps {
                         script {
-                            if(env.GIT_BRANCH=='origin/dev'){
+                            if(env.GIT_BRANCH=='origin/master'){
                                 checkout scm
                             }
                             sh('printenv | sort')
@@ -47,7 +47,7 @@ pipeline {
                     steps {
                         script {
                             print "Environment will be : ${env.NODE_ENV}"
-                            docker.build("digitalhouse-devops:latest")
+                            docker.build("digitalhouse-devops-app:latest")
                         }
                     }
                 }
@@ -56,10 +56,10 @@ pipeline {
                     steps {
                         script {
 
-                            docker.image("digitalhouse-devops:latest").withRun('-p 8030:3000') { c ->
+                            docker.image("digitalhouse-devops-app:latest").withRun('-p 3000:3000') { c ->
                                 sh 'docker ps'
                                 sh 'sleep 10'
-                                sh 'curl http://127.0.0.1:8030/api/v1/healthcheck'
+                                sh 'curl http://127.0.0.1:3000/api/v1/healthcheck'
                                 
                             }
                     
@@ -71,8 +71,8 @@ pipeline {
                     steps {
                         echo 'Push latest para AWS ECR'
                         script {
-                            docker.withRegistry('https://933273154934.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:awsdvops') {
-                                docker.image('digitalhouse-devops').push()
+                            docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com/aws-ecr_devopers', 'ecr:us-east-1:aws-ecr-access') {
+                                docker.image('digitalhouse-devops-app').push()
                             }
                         }
                     }
@@ -80,29 +80,29 @@ pipeline {
             }
         }
 
-        stage('Deploy to DEV') {
+        stage('Deploy to Homolog') {
             agent {  
                 node {
-                    label 'dev'
+                    label 'homolog'
                 }
             }
 
             steps { 
                 script {
-                    if(env.GIT_BRANCH=='origin/dev'){
+                    if(env.GIT_BRANCH=='origin/master'){
  
-                        docker.withRegistry('https://933273154934.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:awsdvops') {
-                            docker.image('digitalhouse-devops').pull()
+                        docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com/aws-ecr_devopers', 'ecr:us-east-1:aws-ecr-access') {
+                            docker.image('digitalhouse-devops-app').pull()
                         }
 
-                        echo 'Deploy para Desenvolvimento'
+                        echo 'Deploy para Homologação'
                         sh "hostname"
-                        sh "docker stop app1"
-                        sh "docker rm app1"
-                        sh "docker run -d --name app1 -p 8030:3000 933273154934.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops:latest"
+                        sh "docker stop app_homolog"
+                        sh "docker rm app_homolog"
+                        sh "docker run -d --name app_homolog -p 3000:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/aws-ecr_devopers/digitalhouse-devops-app:latest"
                         sh "docker ps"
                         sh 'sleep 10'
-                        sh 'curl http://127.0.0.1:8030/api/v1/healthcheck'
+                        sh 'curl http://127.0.0.1:3000/api/v1/healthcheck'
 
                     }
                 }
@@ -113,39 +113,39 @@ pipeline {
         stage('Deploy to Producao') {
             agent {  
                 node {
-                    label 'prod'
+                    label 'producao'
                 }
             }
 
             steps { 
                 script {
-                    if(env.GIT_BRANCH=='origin/prod'){
+                    if(env.GIT_BRANCH=='origin/master'){
  
                         environment {
 
-                            NODE_ENV="production"
-                            AWS_ACCESS_KEY="123456"
-                            AWS_SECRET_ACCESS_KEY="asdfghjkkll"
+                            NODE_ENV="producao"
+                            AWS_ACCESS_KEY=""
+                            AWS_SECRET_ACCESS_KEY=""
                             AWS_SDK_LOAD_CONFIG="0"
-                            BUCKET_NAME="app-digital"
+                            BUCKET_NAME="digitalhouse-devopers-producao"
                             REGION="us-east-1" 
                             PERMISSION=""
                             ACCEPTED_FILE_FORMATS_ARRAY=""
                         }
 
 
-                        docker.withRegistry('https://933273154934.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:awsdvops') {
-                            docker.image('digitalhouse-devops').pull()
+                        docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com/aws-ecr_devopers', 'ecr:us-east-1:aws-ecr-access') {
+                            docker.image('digitalhouse-devops-app').pull()
                         }
 
-                        echo 'Deploy para Desenvolvimento'
+                        echo 'Deploy para Produção'
                         sh "hostname"
-                        sh "docker stop app1"
-                        sh "docker rm app1"
-                        sh "docker run -d --name app1 -p 8030:3000 933273154934.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops:latest"
+                        sh "docker stop app_prod"
+                        sh "docker rm app_prod"
+                        sh "docker run -d --name app_prod -p 80:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/aws-ecr_devopers/digitalhouse-devops-app:latest"
                         sh "docker ps"
                         sh 'sleep 10'
-                        sh 'curl http://127.0.0.1:8030/api/v1/healthcheck'
+                        sh 'curl http://127.0.0.1:80/api/v1/healthcheck'
 
                     }
                 }
