@@ -97,8 +97,8 @@ pipeline {
 
                         echo 'Deploy para Homologação'
                         sh "hostname"
-                        sh "docker stop app_homolog"
-                        sh "docker rm app_homolog"
+                        #sh "docker stop app_homolog"
+                        #sh "docker rm app_homolog"
                         sh "docker run -d --name app_homolog -p 3000:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
                         sh "docker ps"
                         sh 'sleep 10'
@@ -140,8 +140,8 @@ pipeline {
 
                         echo 'Deploy para Produção'
                         sh "hostname"
-                        sh "docker stop app_prod"
-                        sh "docker rm app_prod"
+                        #sh "docker stop app_prod"
+                        #sh "docker rm app_prod"
                         sh "docker run -d --name app_prod -p 80:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
                         sh "docker ps"
                         sh 'sleep 10'
