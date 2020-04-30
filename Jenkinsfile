@@ -87,19 +87,6 @@ pipeline {
                 }
             }
 
-            environment {
-
-                NODE_ENV="homolog"
-                AWS_ACCESS_KEY="credentials('aws-ecr-access')"
-                AWS_SECRET_ACCESS_KEY="credentials('aws-ecr-access')"
-                AWS_SDK_LOAD_CONFIG="0"
-                BUCKET_NAME="digitalhouse-devopers-homolog"
-                REGION="us-east-1" 
-                PERMISSION=""
-                ACCEPTED_FILE_FORMATS_ARRAY=""
-                VERSION="1.0.0"
-            }
-
             steps { 
                 script {
                     if(env.GIT_BRANCH=='origin/master'){
@@ -128,33 +115,9 @@ pipeline {
                 }
             }
 
-            environment {
-
-                NODE_ENV="producao"
-                AWS_ACCESS_KEY="credentials('aws-ecr-access')"
-                AWS_SECRET_ACCESS_KEY="credentials('aws-ecr-access')"
-                AWS_SDK_LOAD_CONFIG="0"
-                BUCKET_NAME="digitalhouse-devopers-producao"
-                REGION="us-east-1" 
-                PERMISSION=""
-                ACCEPTED_FILE_FORMATS_ARRAY=""
-            }
-
             steps { 
                 script {
                     if(env.GIT_BRANCH=='origin/master'){
- 
-                        environment {
-
-                            NODE_ENV="producao"
-                            AWS_ACCESS_KEY="credentials('aws-ecr-access')"
-                            AWS_SECRET_ACCESS_KEY="credentials('aws-ecr-access')"
-                            AWS_SDK_LOAD_CONFIG="0"
-                            BUCKET_NAME="digitalhouse-devopers-producao"
-                            REGION="us-east-1" 
-                            PERMISSION=""
-                            ACCEPTED_FILE_FORMATS_ARRAY=""
-                        }
 
                         docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-ecr-access') {
                             docker.image('digitalhouse-devops-app').pull()
