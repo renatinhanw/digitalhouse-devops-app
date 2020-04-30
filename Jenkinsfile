@@ -56,7 +56,6 @@ pipeline {
                     steps {
                         script {
 
-                            print "Variaveis: ${env.NODE_ENV} - ${env.VERSION}"
                             docker.image("digitalhouse-devops-app:latest").withRun('-p 3000:3000') { c ->
                                 sh 'docker ps'
                                 sh 'sleep 10'
@@ -104,14 +103,10 @@ pipeline {
             steps { 
                 script {
                     if(env.GIT_BRANCH=='origin/master'){
-
-                        print "Environment will be : ${env.NODE_ENV}"
  
                         docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-ecr-access') {
                             docker.image('digitalhouse-devops-app').pull()
                         }
-
-                        print "Variaveis: ${env.NODE_ENV} - ${env.VERSION}"
 
                         echo 'Deploy para Homologação'
                         sh "hostname"
@@ -133,8 +128,6 @@ pipeline {
                 }
             }
 
-            print "Variaveis antes: ${env.NODE_ENV} - ${env.VERSION}"
-
             environment {
 
                 NODE_ENV="producao"
@@ -146,8 +139,6 @@ pipeline {
                 PERMISSION=""
                 ACCEPTED_FILE_FORMATS_ARRAY=""
             }
-
-            print "Variaveis depois: ${env.NODE_ENV} - ${env.VERSION}"
 
             steps { 
                 script {
@@ -165,13 +156,9 @@ pipeline {
                             ACCEPTED_FILE_FORMATS_ARRAY=""
                         }
 
-                        print "Environment will be : ${env.NODE_ENV}"
-
                         docker.withRegistry('https://733036961943.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:aws-ecr-access') {
                             docker.image('digitalhouse-devops-app').pull()
                         }
-
-                        print "Variaveis: ${env.NODE_ENV} - ${env.VERSION}"
 
                         echo 'Deploy para Produção'
                         sh "hostname"
