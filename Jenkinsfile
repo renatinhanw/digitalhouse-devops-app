@@ -5,8 +5,8 @@ pipeline {
     environment {
 
         NODE_ENV="homolog"
-        AWS_ACCESS_KEY="credentials('aws-ecr-access')"
-        AWS_SECRET_ACCESS_KEY="credentials('aws-ecr-access')"
+        AWS_ACCESS_KEY=""
+        AWS_SECRET_ACCESS_KEY=""
         AWS_SDK_LOAD_CONFIG="0"
         BUCKET_NAME="digitalhouse-devopers-homolog"
         REGION="us-east-1" 
@@ -97,6 +97,10 @@ pipeline {
 
                         echo 'Deploy para Homologação'
                         sh "hostname"
+                        catchError {
+                            sh "docker stop app_homolog"
+                            sh "docker rm app_homolog"
+                        }
                         sh "docker run -d --name app_homolog -p 3000:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
                         sh "docker ps"
                         sh 'sleep 10'
@@ -125,6 +129,10 @@ pipeline {
 
                         echo 'Deploy para Produção'
                         sh "hostname"
+                        catchError {
+                            sh "docker stop app_prod"
+                            sh "docker rm app_prod"
+                        }
                         sh "docker run -d --env NODE_ENV=producao --env BUCKET_NAME=digitalhouse-devopers-producao --name app_prod -p 80:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
                         sh "docker ps"
                         sh 'sleep 10'
