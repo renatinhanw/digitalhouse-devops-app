@@ -102,7 +102,7 @@ pipeline {
                             sh "docker rm app_homolog"
                         }
                         node {
-                            withCredentials([[$class:'AmazonWebServicesCredentialsBinding' , credentialsId: 'user_aws_homolog' , variable: 'AWS_ACCESS_KEY_ID', variable: 'AWS_SECRET_ACCESS_KEY']]) {
+                            withCredentials([[$class:'AmazonWebServicesCredentialsBinding' , credentialsId: 'user_aws_homolog' , accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                                 sh "docker run -d --env NODE_ENV=homolog --env BUCKET_NAME=digitalhouse-devopers-homolog --env AWS_ACCESS_KEY=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --name app_homolog -p 3000:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
                                 print "variavel : ${env.AWS_ACCESS_KEY_ID} ${env.AWS_SECRET_ACCESS_KEY}"
                             }
