@@ -97,10 +97,6 @@ pipeline {
 
                         echo 'Deploy para Homologação'
                         sh "hostname"
-                        catchError {
-                            sh "docker stop app_homolog"
-                            sh "docker rm app_homolog"
-                        }
                         sh "docker run -d --name app_homolog -p 3000:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
                         sh "docker ps"
                         sh 'sleep 10'
