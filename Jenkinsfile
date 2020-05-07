@@ -101,7 +101,9 @@ pipeline {
                             sh "docker stop app_homolog"
                             sh "docker rm app_homolog"
                         }
-                        sh "docker run -d --name app_homolog -p 3000:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
+                        withCredentials([[$class:'AmazonWebServicesCredentialsBinding' , credentialsId: 'user_aws_homolog']]) {
+                            sh "docker run -d --env NODE_ENV=homolog --env BUCKET_NAME=digitalhouse-devopers-homolog --env AWS_ACCESS_KEY=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --name app_homolog -p 3000:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
+                        }
                         sh "docker ps"
                         sh 'sleep 10'
                         sh 'curl http://127.0.0.1:3000/api/v1/healthcheck'
@@ -133,9 +135,8 @@ pipeline {
                             sh "docker stop app_prod"
                             sh "docker rm app_prod"
                         }
-                        withCredentials([[$class:'AmazonWebServicesCredentialsBinding' , credentialsId: 'user_aws_homolog']]) {
-                            sh "docker run -d --env NODE_ENV=producao --env BUCKET_NAME=digitalhouse-devopers-producao --env AWS_ACCESS_KEY=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --name app_prod -p 80:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
-                        }sh "docker ps"
+                        sh "docker run -d --env NODE_ENV=producao --env BUCKET_NAME=digitalhouse-devopers-producao --name app_prod -p 80:3000 733036961943.dkr.ecr.us-east-1.amazonaws.com/digitalhouse-devops-app:latest"
+                        sh "docker ps"
                         sh 'sleep 10'
                         sh 'curl http://127.0.0.1:80/api/v1/healthcheck'
 
